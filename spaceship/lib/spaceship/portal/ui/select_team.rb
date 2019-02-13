@@ -67,7 +67,11 @@ module Spaceship
             return team['teamId'] if team['teamId'].strip == team_id
             return team['teamId'] if team['currentTeamMember']['teamMemberId'].to_s.strip == team_id
           end
-          puts("Couldn't find team with ID '#{team_id}'")
+          # Raising error to better inform user of misconfiguration as Apple now provides less friendly error as of 2019-02-12
+          # This is especially important as Developer Portal team IDs are deprecated and should be replaced with App Store Connect teamIDs
+          # "Access Unavailable - You currently don't have access to this membership resource. Contact your team's Account Holder, Josh Holtz, or an Admin."
+          # https://github.com/fastlane/fastlane/issues/14228
+          raise "Couldn't find team with ID '#{team_id}'. Make sure your team ID is using the correct App Store Connect team ID."
         end
 
         if team_name.length > 0
@@ -75,7 +79,10 @@ module Spaceship
           teams.each_with_index do |team, i|
             return team['teamId'] if team['name'].strip == team_name
           end
-          puts("Couldn't find team with Name '#{team_name}'")
+          # Raising error to better inform user of misconfiguration as Apple now provides less friendly error as of 2019-02-12
+          # "Access Unavailable - You currently don't have access to this membership resource. Contact your team's Account Holder, Josh Holtz, or an Admin."
+          # https://github.com/fastlane/fastlane/issues/14228
+          raise "Couldn't find team with Name '#{team_name}'"
         end
 
         return teams[0]['teamId'] if teams.count == 1 # user is just in one team
